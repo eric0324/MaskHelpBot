@@ -103,7 +103,7 @@ function LocationTemplate(data: any) {
                     action: {
                         type: 'uri',
                         label: 'Google Map',
-                        uri: 'https://www.google.com/maps/@' + data.lat + ',' + data.lng,
+                        uri: 'https://www.google.com/maps/search/?api=1&query=' + data.lat + ',' + data.lng,
                     },
                 },
                 {
