@@ -43,23 +43,43 @@ function App(context) {
     return __awaiter(this, void 0, void 0, function () {
         var data, query;
         return __generator(this, function (_a) {
-            if (context.event.isText) {
-                return [2 /*return*/, ExceptionReply];
+            switch (_a.label) {
+                case 0:
+                    if (!context.event.isText) return [3 /*break*/, 1];
+                    return [2 /*return*/, ExceptionReply];
+                case 1:
+                    if (!context.event.isFollow) return [3 /*break*/, 3];
+                    return [4 /*yield*/, context.send([
+                            {
+                                type: 'text',
+                                text: '大家好，我是口罩君，感謝你加我好友！買口罩時候請注意！',
+                            },
+                            {
+                                type: 'image',
+                                originalContentUrl: 'https://i.imgur.com/FIeUpnN.png',
+                                previewImageUrl: 'https://i.imgur.com/FIeUpnN.png'
+                            },
+                        ])];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    if (context.event.isLocation) {
+                        return [2 /*return*/, LocationReply];
+                    }
+                    else if (context.event.isPayload) {
+                        data = context.event.postback.data;
+                        query = data.split("&");
+                        if (query[0] == "report") {
+                            return [2 /*return*/, ReportReply];
+                        }
+                        else if (query[0] == "report_status") {
+                            return [2 /*return*/, ReportStatusReply];
+                        }
+                    }
+                    _a.label = 4;
+                case 4: return [2 /*return*/];
             }
-            else if (context.event.isLocation) {
-                return [2 /*return*/, LocationReply];
-            }
-            else if (context.event.isPayload) {
-                data = context.event.postback.data;
-                query = data.split("&");
-                if (query[0] == "report") {
-                    return [2 /*return*/, ReportReply];
-                }
-                else if (query[0] == "report_status") {
-                    return [2 /*return*/, ReportStatusReply];
-                }
-            }
-            return [2 /*return*/];
         });
     });
 }
