@@ -1,0 +1,25 @@
+{
+  "name": "chatbot-bot",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bottender dev",
+    "lint": "eslint .",
+    "start": "bottender start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bottender": "1.0.0-beta.4",
+    "eslint": "6.7.2",
+    "eslint-config-prettier": "6.7.0",
+    "eslint-plugin-prettier": "3.1.1",
+    "jest": "24.9.0",
+    "prettier": "1.19.1",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.17",
+    "typescript": "^3.7.3"
+  }
+}
