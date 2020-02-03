@@ -65,15 +65,7 @@ function ReportReply(context) {
                                     label: '短缺',
                                     data: 'report_status&status=SHORTAGE&id=' + id
                                 },
-                            },
-                            {
-                                type: 'action',
-                                action: {
-                                    type: 'postback',
-                                    label: '未知',
-                                    data: 'report_status&status=UNKNOWN&id=' + id
-                                },
-                            },
+                            }
                         ],
                     };
                     return [4 /*yield*/, context.send([
@@ -98,8 +90,7 @@ function sendData(status, id) {
                 case 0:
                     url = (process.env.MASK_API_PATH + "/api/supply/" + id) || "";
                     readyData = {
-                        'maskStatus': status,
-                        'childrenMaskStatus': "UNKNOWN"
+                        "maskStatus": status
                     };
                     return [4 /*yield*/, axios_1.default.patch(url, readyData)];
                 case 1: return [2 /*return*/, _a.sent()];
