@@ -5,7 +5,6 @@ function LocationTemplate(data: any) {
     let mask_status_color          = "#777777"
     let children_mask_status       = "未知"
     let children_mask_status_color = "#777777"
-
     switch (data.MaskStatus) {
         case 'AVAILABLE':
             mask_status       = "充足"

@@ -18,7 +18,7 @@ async function ReportReply(context: any) {
             action: {
               type: 'postback',
               label: '短缺',
-              data: 'report_status&status=SHORTAGE&id=1' + id
+              data: 'report_status&status=SHORTAGE&id=' + id
             },
           },
           {
@@ -26,7 +26,7 @@ async function ReportReply(context: any) {
             action: {
               type: 'postback',
               label: '未知',
-              data: 'report_status&status=UNKNOWN&id=1' + id
+              data: 'report_status&status=UNKNOWN&id=' + id
             },
           },
         ],
@@ -41,10 +41,10 @@ async function ReportReply(context: any) {
 }
 
 async function sendData(status: string ,id: any){
-    let url: string = process.env.MASK_API_PATH + "/api/supply/" + id || ""
-
+    let url: string = (process.env.MASK_API_PATH + "/api/supply/" + id) || ""
     var readyData = {
-        maskStatus: status
+        'maskStatus': status,
+        'childrenMaskStatus': "UNKNOWN"
     };
 
     return await axios.patch(url, readyData)

@@ -63,7 +63,7 @@ function ReportReply(context) {
                                 action: {
                                     type: 'postback',
                                     label: '短缺',
-                                    data: 'report_status&status=SHORTAGE&id=1' + id
+                                    data: 'report_status&status=SHORTAGE&id=' + id
                                 },
                             },
                             {
@@ -71,7 +71,7 @@ function ReportReply(context) {
                                 action: {
                                     type: 'postback',
                                     label: '未知',
-                                    data: 'report_status&status=UNKNOWN&id=1' + id
+                                    data: 'report_status&status=UNKNOWN&id=' + id
                                 },
                             },
                         ],
@@ -96,9 +96,10 @@ function sendData(status, id) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    url = process.env.MASK_API_PATH + "/api/supply/" + id || "";
+                    url = (process.env.MASK_API_PATH + "/api/supply/" + id) || "";
                     readyData = {
-                        maskStatus: status
+                        'maskStatus': status,
+                        'childrenMaskStatus': "UNKNOWN"
                     };
                     return [4 /*yield*/, axios_1.default.patch(url, readyData)];
                 case 1: return [2 /*return*/, _a.sent()];
