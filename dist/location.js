@@ -247,7 +247,7 @@ function getNHIData() {
 }
 function LocationReply(context) {
     return __awaiter(this, void 0, void 0, function () {
-        var latitude, longitude, response, contents, index, place_bubble, carousel;
+        var latitude, longitude, response, contents, carousel_num, index, place_bubble, carousel;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -256,12 +256,16 @@ function LocationReply(context) {
                     return [4 /*yield*/, getData(latitude, longitude)];
                 case 1:
                     response = _a.sent();
-                    console.log();
                     if (response.length > 0) {
                         contents = [];
+                        carousel_num = 1;
                         for (index in response) {
                             place_bubble = LocationTemplate(response[index]);
                             contents.push(place_bubble);
+                            carousel_num++;
+                            if (carousel_num == 10) {
+                                break;
+                            }
                         }
                         carousel = {
                             type: 'carousel',
