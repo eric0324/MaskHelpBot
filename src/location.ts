@@ -202,7 +202,7 @@ async function LocationReply(context: any) {
             var place_bubble = LocationTemplate(response[index]);
             contents.push(place_bubble);
             carousel_num++
-            if (carousel_num == 10) {
+            if (carousel_num == 9) {
                 break;
             }
         }
