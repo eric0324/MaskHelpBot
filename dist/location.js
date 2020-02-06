@@ -88,7 +88,7 @@ function LocationTemplate(data) {
                             contents: [
                                 {
                                     type: 'text',
-                                    text: '口罩供應狀態',
+                                    text: '成人口罩剩下',
                                     color: '#aaaaaa',
                                     size: 'md',
                                     flex: 4,
@@ -116,7 +116,7 @@ function LocationTemplate(data) {
                             contents: [
                                 {
                                     type: 'text',
-                                    text: '兒童口罩供應狀態',
+                                    text: '兒童口罩剩下',
                                     color: '#aaaaaa',
                                     size: 'md',
                                     flex: 4,
@@ -256,16 +256,22 @@ function LocationReply(context) {
                     return [4 /*yield*/, getData(latitude, longitude)];
                 case 1:
                     response = _a.sent();
-                    contents = [];
-                    for (index in response) {
-                        place_bubble = LocationTemplate(response[index]);
-                        contents.push(place_bubble);
+                    console.log();
+                    if (response.length > 0) {
+                        contents = [];
+                        for (index in response) {
+                            place_bubble = LocationTemplate(response[index]);
+                            contents.push(place_bubble);
+                        }
+                        carousel = {
+                            type: 'carousel',
+                            contents: contents,
+                        };
+                        context.sendFlex('您傳送位址附近的藥局', carousel);
                     }
-                    carousel = {
-                        type: 'carousel',
-                        contents: contents,
-                    };
-                    context.sendFlex('您傳送位址附近的商家', carousel);
+                    else {
+                        context.sendText('您傳送位址附近沒有可用的藥局');
+                    }
                     return [2 /*return*/];
             }
         });

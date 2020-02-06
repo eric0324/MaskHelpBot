@@ -46,7 +46,7 @@ function LocationTemplate(data: any) {
                             contents: [
                                 {
                                     type: 'text',
-                                    text: '口罩供應狀態',
+                                    text: '成人口罩剩下',
                                     color: '#aaaaaa',
                                     size: 'md',
                                     flex: 4,
@@ -74,7 +74,7 @@ function LocationTemplate(data: any) {
                             contents: [
                                 {
                                     type: 'text',
-                                    text: '兒童口罩供應狀態',
+                                    text: '兒童口罩剩下',
                                     color: '#aaaaaa',
                                     size: 'md',
                                     flex: 4,
@@ -193,19 +193,23 @@ async function LocationReply(context: any) {
     let longitude = context.event.message.longitude;
 
     const response : any= await getData(latitude, longitude);
+    console.log()
+    if (response.length > 0) {
+        let contents: any = [];
 
-    let contents: any = [];
+        for (var index in response) {
+            var place_bubble = LocationTemplate(response[index]);
+            contents.push(place_bubble);
+        }
 
-    for (var index in response) {
-        var place_bubble = LocationTemplate(response[index]);
-        contents.push(place_bubble);
+        var carousel: any = {
+            type: 'carousel',
+            contents: contents,
+        };
+        context.sendFlex('您傳送位址附近的藥局', carousel);
+    } else {
+        context.sendText('您傳送位址附近沒有可用的藥局');
     }
-
-    var carousel: any = {
-        type: 'carousel',
-        contents: contents,
-    };
-    context.sendFlex('您傳送位址附近的商家', carousel);
 }
 
 module.exports = {
