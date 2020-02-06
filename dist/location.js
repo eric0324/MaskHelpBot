@@ -39,29 +39,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var fs_1 = __importDefault(require("fs"));
 var axios_1 = __importDefault(require("axios"));
+var jsonQuery = require('json-query');
 function LocationTemplate(data) {
-    var mask_status = "未知";
     var mask_status_color = "#777777";
-    var children_mask_status = "未知";
     var children_mask_status_color = "#777777";
-    switch (data.MaskStatus) {
-        case 'AVAILABLE':
-            mask_status = "充足";
-            mask_status_color = "#00ff00";
-            break;
-        case 'SHORTAGE':
-            mask_status = "售完";
-            mask_status_color = "#ff0000";
+    if (parseInt(data.adult_number) > 20) {
+        mask_status_color = "#00ff00";
     }
-    switch (data.childrenMaskStatus) {
-        case 'AVAILABLE':
-            children_mask_status = "充足";
-            children_mask_status_color = "#00ff00";
-            break;
-        case 'SHORTAGE':
-            children_mask_status = "售完";
-            children_mask_status_color = "#ff0000";
+    else {
+        mask_status_color = "#ff0000";
+    }
+    if (parseInt(data.childer_number) > 20) {
+        children_mask_status_color = "#00ff00";
+    }
+    else {
+        children_mask_status_color = "#ff0000";
     }
     return {
         type: 'bubble',
@@ -71,8 +65,16 @@ function LocationTemplate(data) {
             contents: [
                 {
                     type: 'text',
-                    text: data.category + data.name,
+                    text: data.name,
                     weight: 'bold',
+                    size: 'lg',
+                },
+                {
+                    type: 'text',
+                    margin: 'lg',
+                    text: data.address,
+                    weight: 'bold',
+                    color: '#aaaaaa',
                     size: 'md',
                 },
                 {
@@ -88,15 +90,15 @@ function LocationTemplate(data) {
                                     type: 'text',
                                     text: '口罩供應狀態',
                                     color: '#aaaaaa',
-                                    size: 'sm',
+                                    size: 'md',
                                     flex: 4,
                                 },
                                 {
                                     type: 'text',
-                                    text: mask_status,
+                                    text: data.adult_number,
                                     wrap: true,
                                     color: mask_status_color,
-                                    size: 'sm',
+                                    size: 'md',
                                     flex: 2,
                                 },
                             ],
@@ -116,15 +118,15 @@ function LocationTemplate(data) {
                                     type: 'text',
                                     text: '兒童口罩供應狀態',
                                     color: '#aaaaaa',
-                                    size: 'sm',
+                                    size: 'md',
                                     flex: 4,
                                 },
                                 {
                                     type: 'text',
-                                    text: children_mask_status,
+                                    text: data.childer_number,
                                     wrap: true,
                                     color: children_mask_status_color,
-                                    size: 'sm',
+                                    size: 'md',
                                     flex: 2,
                                 },
                             ],
@@ -148,9 +150,9 @@ function LocationTemplate(data) {
                 {
                     type: 'button',
                     action: {
-                        type: 'postback',
-                        label: '回報供應狀態',
-                        data: 'report&id=' + data.id,
+                        type: 'uri',
+                        label: '緊急聯繫電話',
+                        uri: 'tel:' + data.phone,
                     },
                 }
             ],
@@ -159,20 +161,93 @@ function LocationTemplate(data) {
 }
 function getData(lat, lng) {
     return __awaiter(this, void 0, void 0, function () {
-        var url;
+        var path, fileContent, jsonContent;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    url = process.env.MASK_API_PATH + "/api/supply?page=0&size=10&lat=" + lat + "&lng=" + lng + "&radius=1000" || "";
-                    return [4 /*yield*/, axios_1.default.get(url)];
+                    path = "point.json";
+                    new Promise(function () {
+                        fileContent = fs_1.default.readFileSync(path, { encoding: 'utf8' });
+                        jsonContent = JSON.parse(fileContent);
+                    });
+                    return [4 /*yield*/, queryNearbyPoint(jsonContent, lat, lng)];
                 case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function queryNearbyPoint(data, lat, lng) {
+    return __awaiter(this, void 0, void 0, function () {
+        var lat_max, lat_min, lng_max, lng_min, nearby_point_array, resp_data, csv;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    lat_max = parseFloat(lat) + 0.01;
+                    lat_min = parseFloat(lat) - 0.01;
+                    lng_max = parseFloat(lng) + 0.01;
+                    lng_min = parseFloat(lng) - 0.01;
+                    nearby_point_array = [];
+                    data.forEach(function (element) {
+                        if ((lng_min < element.Response_X) && (element.Response_X < lng_max) && (lat_min < element.Response_Y) && (element.Response_Y < lat_max)) {
+                            nearby_point_array.push(element);
+                        }
+                    });
+                    resp_data = [];
+                    return [4 /*yield*/, getNHIData()];
+                case 1:
+                    csv = _a.sent();
+                    nearby_point_array.forEach(function (element) {
+                        var wanted = jsonQuery('data[code=' + element.醫事機構代碼 + ']', {
+                            data: csv
+                        });
+                        if (wanted.value != null) {
+                            var d = wanted.value;
+                            d["lng"] = element.Response_X;
+                            d["lat"] = element.Response_Y;
+                            resp_data.push(d);
+                        }
+                    });
+                    return [2 /*return*/, resp_data];
+            }
+        });
+    });
+}
+function getNHIData() {
+    return __awaiter(this, void 0, void 0, function () {
+        var mask_path, allText, text, lines, results, i, currentline, obj;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    mask_path = "https://data.nhi.gov.tw/resource/mask/maskdata.csv";
+                    return [4 /*yield*/, axios_1.default.get(mask_path)];
+                case 1:
+                    allText = _a.sent();
+                    text = allText.data;
+                    lines = text.split("\n");
+                    results = [];
+                    for (i = 1; i < lines.length - 1; i++) {
+                        currentline = lines[i].split(",");
+                        obj = {
+                            code: currentline[0],
+                            name: currentline[1],
+                            address: currentline[2],
+                            phone: currentline[3],
+                            adult_number: currentline[4],
+                            childer_number: currentline[5],
+                            update: currentline[6],
+                        };
+                        results.push(obj);
+                    }
+                    return [2 /*return*/, JSON.parse(JSON.stringify({
+                            'data': results
+                        }))];
             }
         });
     });
 }
 function LocationReply(context) {
     return __awaiter(this, void 0, void 0, function () {
-        var latitude, longitude, response, resp, contents, index, place_bubble, carousel;
+        var latitude, longitude, response, contents, index, place_bubble, carousel;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -181,10 +256,9 @@ function LocationReply(context) {
                     return [4 /*yield*/, getData(latitude, longitude)];
                 case 1:
                     response = _a.sent();
-                    resp = response.data;
                     contents = [];
-                    for (index in resp.content) {
-                        place_bubble = LocationTemplate(resp.content[index]);
+                    for (index in response) {
+                        place_bubble = LocationTemplate(response[index]);
                         contents.push(place_bubble);
                     }
                     carousel = {
