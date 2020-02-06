@@ -193,13 +193,18 @@ async function LocationReply(context: any) {
     let longitude = context.event.message.longitude;
 
     const response : any= await getData(latitude, longitude);
-    console.log()
+
     if (response.length > 0) {
         let contents: any = [];
+        var carousel_num = 1;
 
         for (var index in response) {
             var place_bubble = LocationTemplate(response[index]);
             contents.push(place_bubble);
+            carousel_num++
+            if (carousel_num == 10) {
+                break;
+            }
         }
 
         var carousel: any = {
