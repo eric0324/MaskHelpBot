@@ -133,10 +133,10 @@ async function getData(lat: string, lng: string){
 
 async function queryNearbyPoint(data: any, lat: any, lng: any) {
     // Get nearby place
-    let lat_max = parseFloat(lat) + 0.01;
-    let lat_min = parseFloat(lat) - 0.01;
-    let lng_max = parseFloat(lng) + 0.01;
-    let lng_min = parseFloat(lng) - 0.01;
+    let lat_max = parseFloat(lat) + 0.05;
+    let lat_min = parseFloat(lat) - 0.05;
+    let lng_max = parseFloat(lng) + 0.05;
+    let lng_min = parseFloat(lng) - 0.05;
     var nearby_point_array:any = []
     data.forEach((element: { Response_X: number; Response_Y: number; 醫事機構代碼: any; })=> {
         if ((lng_min < element.Response_X) && (element.Response_X < lng_max) && (lat_min < element.Response_Y) && (element.Response_Y < lat_max)){
