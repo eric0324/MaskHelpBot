@@ -35,48 +35,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var ExceptionReply = require('./exception').ExceptionReply;
-var LocationReply = require('./location').LocationReply;
-var TodayReply = require('./today').TodayReply;
-function App(context) {
+function TodayReply(context) {
     return __awaiter(this, void 0, void 0, function () {
+        var d, n, reply_text;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!context.event.isText) return [3 /*break*/, 1];
-                    if (context.event.text == "今天誰可以買口罩") {
-                        return [2 /*return*/, TodayReply];
+                    d = new Date();
+                    n = d.getDay();
+                    reply_text = "";
+                    if ((n == 2) || (n == 4) || (n == 6)) {
+                        reply_text = "身分證末一碼是『偶數』的才可以買口罩。";
+                    }
+                    else if ((n == 1) || (n == 3) || (n == 5)) {
+                        reply_text = "身分證末一碼是『奇數』的才可以買口罩。";
                     }
                     else {
-                        return [2 /*return*/, ExceptionReply];
+                        reply_text = "今天大家都可以買口罩！";
                     }
-                    return [3 /*break*/, 4];
+                    return [4 /*yield*/, context.sendText(reply_text)];
                 case 1:
-                    if (!context.event.isFollow) return [3 /*break*/, 3];
-                    return [4 /*yield*/, context.send([
-                            {
-                                type: 'text',
-                                text: '感謝您加我好友！這隻機器人主要會協助您找到附近有在販售口罩的藥局',
-                            },
-                            {
-                                type: 'image',
-                                originalContentUrl: 'https://i.imgur.com/eg5irdx.jpg',
-                                previewImageUrl: 'https://i.imgur.com/eg5irdx.jpg'
-                            },
-                        ])];
-                case 2:
                     _a.sent();
-                    return [3 /*break*/, 4];
-                case 3:
-                    if (context.event.isLocation) {
-                        return [2 /*return*/, LocationReply];
-                    }
-                    _a.label = 4;
-                case 4: return [2 /*return*/];
+                    return [2 /*return*/];
             }
         });
     });
 }
-exports.default = App;
-;
+module.exports = {
+    TodayReply: TodayReply,
+};

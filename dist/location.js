@@ -178,17 +178,13 @@ function getData(lat, lng) {
 }
 function queryNearbyPoint(data, lat, lng) {
     return __awaiter(this, void 0, void 0, function () {
-        var lat_max, lat_min, lng_max, lng_min, nearby_point_array, resp_data, csv;
+        var nearby_point_array, resp_data, csv;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    lat_max = parseFloat(lat) + 0.01;
-                    lat_min = parseFloat(lat) - 0.01;
-                    lng_max = parseFloat(lng) + 0.01;
-                    lng_min = parseFloat(lng) - 0.01;
                     nearby_point_array = [];
                     data.forEach(function (element) {
-                        if ((lng_min < element.Response_X) && (element.Response_X < lng_max) && (lat_min < element.Response_Y) && (element.Response_Y < lat_max)) {
+                        if (distance(lat, lng, element.Response_Y, element.Response_X) <= 5) {
                             nearby_point_array.push(element);
                         }
                     });
@@ -211,6 +207,20 @@ function queryNearbyPoint(data, lat, lng) {
             }
         });
     });
+}
+function distance(lat1, lon1, lat2, lon2) {
+    var radlat1 = Math.PI * lat1 / 180;
+    var radlat2 = Math.PI * lat2 / 180;
+    var theta = lon1 - lon2;
+    var radtheta = Math.PI * theta / 180;
+    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+        dist = 1;
+    }
+    dist = Math.acos(dist);
+    dist = dist * 180 / Math.PI;
+    dist = dist * 60 * 1.1515 * 1.609344;
+    return dist;
 }
 function getNHIData() {
     return __awaiter(this, void 0, void 0, function () {

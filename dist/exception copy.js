@@ -35,48 +35,59 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var ExceptionReply = require('./exception').ExceptionReply;
-var LocationReply = require('./location').LocationReply;
-var TodayReply = require('./today').TodayReply;
-function App(context) {
+function ExceptionReply(context) {
     return __awaiter(this, void 0, void 0, function () {
+        var bubble;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!context.event.isText) return [3 /*break*/, 1];
-                    if (context.event.text == "今天誰可以買口罩") {
-                        return [2 /*return*/, TodayReply];
-                    }
-                    else {
-                        return [2 /*return*/, ExceptionReply];
-                    }
-                    return [3 /*break*/, 4];
+                    bubble = {
+                        type: 'bubble',
+                        body: {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                                {
+                                    type: 'text',
+                                    margin: 'sm',
+                                    text: '無法理解',
+                                    weight: 'bold',
+                                    size: 'lg',
+                                },
+                                {
+                                    type: 'text',
+                                    margin: 'sm',
+                                    wrap: true,
+                                    text: '我無法理解您的內容，試著直接傳送位址看看！',
+                                    color: '#777777',
+                                    size: 'md',
+                                    flex: 1,
+                                },
+                            ],
+                        },
+                        footer: {
+                            type: 'box',
+                            layout: 'vertical',
+                            contents: [
+                                {
+                                    type: 'button',
+                                    action: {
+                                        type: 'uri',
+                                        label: '傳送位址',
+                                        uri: 'line://nv/location',
+                                    },
+                                },
+                            ],
+                        },
+                    };
+                    return [4 /*yield*/, context.sendFlex('我無法理解你想表達的內容', bubble)];
                 case 1:
-                    if (!context.event.isFollow) return [3 /*break*/, 3];
-                    return [4 /*yield*/, context.send([
-                            {
-                                type: 'text',
-                                text: '感謝您加我好友！這隻機器人主要會協助您找到附近有在販售口罩的藥局',
-                            },
-                            {
-                                type: 'image',
-                                originalContentUrl: 'https://i.imgur.com/eg5irdx.jpg',
-                                previewImageUrl: 'https://i.imgur.com/eg5irdx.jpg'
-                            },
-                        ])];
-                case 2:
                     _a.sent();
-                    return [3 /*break*/, 4];
-                case 3:
-                    if (context.event.isLocation) {
-                        return [2 /*return*/, LocationReply];
-                    }
-                    _a.label = 4;
-                case 4: return [2 /*return*/];
+                    return [2 /*return*/];
             }
         });
     });
 }
-exports.default = App;
-;
+module.exports = {
+    ExceptionReply: ExceptionReply,
+};

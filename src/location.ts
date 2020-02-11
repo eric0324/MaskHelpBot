@@ -133,18 +133,17 @@ async function getData(lat: string, lng: string){
 
 async function queryNearbyPoint(data: any, lat: any, lng: any) {
     // Get nearby place
-    let lat_max = parseFloat(lat) + 0.1;
-    let lat_min = parseFloat(lat) - 0.1;
-    let lng_max = parseFloat(lng) + 0.1;
-    let lng_min = parseFloat(lng) - 0.1;
     var nearby_point_array:any = []
-    data.forEach((element: { Response_X: number; Response_Y: number; 醫事機構代碼: any; })=> {
-        if ((lng_min < element.Response_X) && (element.Response_X < lng_max) && (lat_min < element.Response_Y) && (element.Response_Y < lat_max)){
+
+    data.forEach((element: { Response_X: any, Response_Y: any, lat_min: any, lat_mix: any })=> {
+        if (distance(lat, lng, element.Response_Y, element.Response_X) <= 5) {
             nearby_point_array.push(element)
         }
     });
     let resp_data: any = [];
 
+
+    
     let csv:any = await getNHIData();
     nearby_point_array.forEach((element: any) => {
         var wanted = jsonQuery('data[code='+element.醫事機構代碼+']', {
@@ -158,15 +157,33 @@ async function queryNearbyPoint(data: any, lat: any, lng: any) {
         }
     });
     return resp_data;
+    
 }
+
+function distance(lat1: any, lon1: any, lat2: any, lon2: any) {
+    var radlat1 = Math.PI * lat1 / 180
+    var radlat2 = Math.PI * lat2 / 180
+    var theta = lon1 - lon2
+    var radtheta = Math.PI * theta / 180
+    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+        dist = 1;
+    }
+    dist = Math.acos(dist)
+    dist = dist * 180/Math.PI
+    dist = dist * 60 * 1.1515 * 1.609344
+    return dist
+}
+
+
 
 async function getNHIData(){
     // Get NHI Data
     let mask_path = "https://data.nhi.gov.tw/resource/mask/maskdata.csv"
     let allText: any = await axios.get(mask_path);
     let text = allText.data;
-    var lines = text.split("\n");
-    var results = [];
+    let lines = text.split("\n");
+    let results = [];
 
     for( var i=1 ; i<lines.length-1 ; i++){
 
