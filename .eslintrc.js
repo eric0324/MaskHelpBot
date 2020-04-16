@@ -1,8 +1,12 @@
 module.exports = {
-  parserOptions: {
-    ecmaVersion: 2018,
-  },
-  extends: ['eslint:recommended', 'prettier'],
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'prettier/@typescript-eslint',
+  ],
   env: {
     node: true,
   },
@@ -14,11 +18,13 @@ module.exports = {
         singleQuote: true,
       },
     ],
+    '@typescript-eslint/camelcase': 'off',
+    '@typescript-eslint/no-use-before-define': 'off'
   },
-  plugins: ['prettier'],
+  plugins: ['import', 'prettier', '@typescript-eslint'],
   overrides: [
     {
-      files: ['**/*.test.js'],
+      files: ['**/*.test.ts'],
       env: {
         jest: true,
       },
