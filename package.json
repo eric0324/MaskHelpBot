@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@types/json-query": "^2.2.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bottender": "^1.4.0",
     "csv-parse": "^4.8.5",
     "json-query": "^2.2.2",
